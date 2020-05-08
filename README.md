@@ -25,7 +25,7 @@ docker-compose up -d --build
 
  You can omit -d if you want to run it in the foreground and dump all logs from all containers into your terminal. Alternatively you can use ```docker logs <container name> -f``` to tail logs from a specific container.
 
-You can use ```docker ps``` command to see the running containers. You should see 6 running containers. ** Don't forget to run the migrations provided in the next section.**
+You can use ```docker ps``` command to see the running containers. You should see 4 running containers. ** Don't forget to run the migrations provided in the next section.**
 
 The folders **connections/** and **/migrations** are mounted from the host to the container. Any changes made from the host will propagate to the container and vice versa.
 
