@@ -21,6 +21,7 @@ class PersonFactory(BaseFactory):
     email = Sequence(lambda n: f'person{n}@example.com')
     first_name = Faker('first_name')
     last_name = Faker('last_name')
+    date_of_birth = Faker('date')
 
     class Meta:
 
