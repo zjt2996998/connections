@@ -19,4 +19,4 @@ RUN pipenv install --system --dev --deploy \
 
 COPY . /app
 
-EXPOSE 5000
+CMD gunicorn -b 0.0.0.0:5000 --access-logfile - connections:app

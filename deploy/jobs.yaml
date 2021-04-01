@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: connections-pytest
+spec:
+  template:
+    spec:
+      containers:
+      - name: connections-pytest-job
+        image: connections-image
+        env:
+          - name: FLASK_APP
+            value: connections.app
+          - name: TEST_DB_HOST
+            value: connections-mysql
+          - name: TEST_DB_USER
+            value: root
+          - name: TEST_DB_PASSWORD
+            value: very_secure_password
+          - name: TEST_DB_NAME
+            value: connections_db_test
+        command: ["pytest"]
+      restartPolicy: Never
+  backoffLimit: 0
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: connections-flake
+spec:
+  template:
+    spec:
+      containers:
+      - name: connections-flake-job
+        image: connections-image
+        env:
+          - name: FLASK_APP
+            value: connections.app
+          - name: TEST_DB_HOST
+            value: connections-mysql
+          - name: TEST_DB_USER
+            value: root
+          - name: TEST_DB_PASSWORD
+            value: very_secure_password
+          - name: TEST_DB_NAME
+            value: connections_db_test
+        command: ["flake8"]
+        args: ['.']
+      restartPolicy: Never
+  backoffLimit: 0
