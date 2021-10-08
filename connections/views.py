@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import Blueprint
+from flask import Blueprint, request
 from marshmallow import ValidationError
 from sqlalchemy.orm import joinedload
 from webargs.flaskparser import use_args
@@ -29,6 +29,21 @@ def create_person(person):
         return err.messages, HTTPStatus.BAD_REQUEST
 
     return PersonSchema().jsonify(person), HTTPStatus.CREATED
+
+
+@blueprint.route('/people/<person_id>/mutual_friends', methods=['GET'])
+def get_friend(person_id):
+    target_id = request.args.get('target_id')
+    people_schema = PersonSchema(many=True)
+    friend = Person.query.filter_by(
+        id=target_id
+    ).first_or_404()
+    people = Person.query.options(
+        joinedload('connections'),
+    ).filter_by(
+        id=person_id
+    ).first_or_404().mutual_friends(friend)
+    return people_schema.jsonify(people), HTTPStatus.OK
 
 
 @blueprint.route('/connections', methods=['POST'])
