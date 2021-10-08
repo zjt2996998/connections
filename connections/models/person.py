@@ -1,4 +1,5 @@
 from connections.database import CreatedUpdatedMixin, CRUDMixin, db, Model
+from connections.models.connection import ConnectionType
 
 
 class Person(Model, CRUDMixin, CreatedUpdatedMixin):
@@ -9,3 +10,10 @@ class Person(Model, CRUDMixin, CreatedUpdatedMixin):
     date_of_birth = db.Column(db.Date, nullable=False)
 
     connections = db.relationship('Connection', foreign_keys='Connection.from_person_id')
+
+    def mutual_friends(self, person):
+        mutual_friend = []
+        for con in person.connections:
+            if con.connection_type is ConnectionType.friend:
+                mutual_friend.append(con.to_person)
+        return mutual_friend

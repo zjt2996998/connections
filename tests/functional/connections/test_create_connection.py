@@ -1,7 +1,6 @@
 from datetime import date
 from http import HTTPStatus
 
-import pytest
 from tests.factories import PersonFactory
 
 from connections.models.connection import Connection
@@ -30,7 +29,6 @@ def test_can_create_connection(db, testapp):
     assert connection.connection_type.value == 'coworker'
 
 
-@pytest.mark.xfail
 def test_create_connection_parent_and_child_validation(db, testapp):
     parent = PersonFactory(date_of_birth=date(1950, 10, 1))
     child = PersonFactory(date_of_birth=date(1990, 10, 1))

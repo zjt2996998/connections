@@ -7,7 +7,6 @@ from tests.factories import PersonFactory
 from connections.schemas import ConnectionSchema
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize('from_dob, to_dob, conn_type, error_message', [
     pytest.param((1950, 10, 1), (1990, 10, 1), 'son', 'son older than parent'),
     pytest.param((1990, 10, 1), (1950, 10, 1), 'father', 'father younger than child'),

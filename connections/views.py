@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from flask import Blueprint
+from marshmallow import ValidationError
 from webargs.flaskparser import use_args
 
 from connections.models.person import Person
@@ -19,12 +20,20 @@ def get_people():
 @blueprint.route('/people', methods=['POST'])
 @use_args(PersonSchema(), locations=('json',))
 def create_person(person):
-    person.save()
+    try:
+        person.save()
+    except ValidationError as err:
+        return err.messages, HTTPStatus.BAD_REQUEST
+
     return PersonSchema().jsonify(person), HTTPStatus.CREATED
 
 
 @blueprint.route('/connections', methods=['POST'])
 @use_args(ConnectionSchema(), locations=('json',))
 def create_connection(connection):
-    connection.save()
+    try:
+        connection.save()
+    except ValidationError as err:
+        return err.messages, HTTPStatus.BAD_REQUEST
+
     return ConnectionSchema().jsonify(connection), HTTPStatus.CREATED
