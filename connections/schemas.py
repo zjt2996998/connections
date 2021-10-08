@@ -42,21 +42,32 @@ class ConnectionSchema(BaseModelSchema):
     from_person_id = fields.Integer()
     to_person_id = fields.Integer()
     connection_type = EnumField(ConnectionType)
+    from_person = fields.Nested(
+        PersonSchema,
+        only=['id', 'first_name', 'last_name', 'email', 'date_of_birth'],
+        dump_only=True,
+    )
+    to_person = fields.Nested(
+        PersonSchema,
+        only=['id', 'first_name', 'last_name', 'email', 'date_of_birth'],
+        dump_only=True,
+    )
 
     @validates_schema()
     def validate_object(self, data):
-        from_person = Person.query.get(data['from_person_id']).date_of_birth
-        to_person = Person.query.get(data['from_person_id']).date_of_birth
-        if from_person >= to_person:
-            if data['connection_type'] is ConnectionType.son:
-                raise ValidationError('Invalid connection - son older than parent.')
-            elif data['connection_type'] is ConnectionType.daughter:
-                raise ValidationError('Invalid connection - daughter older than parent.')
-        if from_person <= to_person:
-            if data['connection_type'] is ConnectionType.father:
-                raise ValidationError('Invalid connection - father younger than child.')
-            elif data['connection_type'] is ConnectionType.mother:
-                raise ValidationError('Invalid connection - mother younger than child.')
+        if 'from_person_id' in data and 'to_person_id' in data:
+            from_person = Person.query.get(data['from_person_id']).date_of_birth
+            to_person = Person.query.get(data['to_person_id']).date_of_birth
+            if from_person <= to_person:
+                if data['connection_type'] is ConnectionType.son:
+                    raise ValidationError('Invalid connection - son older than parent.')
+                elif data['connection_type'] is ConnectionType.daughter:
+                    raise ValidationError('Invalid connection - daughter older than parent.')
+            if from_person >= to_person:
+                if data['connection_type'] is ConnectionType.father:
+                    raise ValidationError('Invalid connection - father younger than child.')
+                elif data['connection_type'] is ConnectionType.mother:
+                    raise ValidationError('Invalid connection - mother younger than child.')
 
     class Meta:
         model = Connection
